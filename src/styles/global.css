@@ -1,0 +1,55 @@
+@import 'tailwindcss';
+@config '../../tailwind.config.mjs';
+
+@layer base {
+	:root {
+		/* navbar height — single source; main offsets by it */
+		--nav-h: 72px;
+	}
+
+	html {
+		@apply scroll-smooth;
+	}
+
+	body {
+		@apply bg-surface font-body text-body-md text-ink antialiased;
+		overflow-x: hidden;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		@apply font-display;
+	}
+
+	img, svg, video {
+		@apply max-w-full h-auto;
+	}
+}
+
+@layer utilities {
+	.eyebrow {
+		@apply font-mono text-eyebrow uppercase text-ink-variant;
+	}
+}
+
+/* Generic scroll-reveal — used by reveal.ts (added in a later milestone).
+   Uses logical/transform properties only; RTL-safe. */
+[data-reveal] {
+	opacity: 0;
+	transform: translateY(24px);
+	transition:
+		opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+		transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-reveal].is-revealed {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-reveal] {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+}

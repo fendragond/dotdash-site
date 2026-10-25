@@ -1,0 +1,215 @@
+---
+import { t, type Locale } from '../i18n/ui';
+
+export interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const nameLabel = t(locale, 'contact.name');
+const namePlaceholder = t(locale, 'contact.namePlaceholder');
+const emailLabel = t(locale, 'contact.email');
+const emailPlaceholder = t(locale, 'contact.emailPlaceholder');
+const messageLabel = t(locale, 'contact.message');
+const messagePlaceholder = t(locale, 'contact.messagePlaceholder');
+const submitLabel = t(locale, 'contact.submit');
+const toastSuccess = t(locale, 'contact.toastSuccess');
+const toastError = t(locale, 'contact.toastError');
+const toastClose = t(locale, 'toast.close');
+---
+
+<form
+	class="contact-form font-body"
+	data-contact-form
+	data-toast-success={toastSuccess}
+	data-toast-error={toastError}
+	data-toast-close={toastClose}
+	data-reveal
+	novalidate
+>
+	{/* Honeypot — visually hidden, not display:none (bots often skip those). */}
+	<div class="contact-form__honeypot" aria-hidden="true">
+		<label for="contact-company">Company</label>
+		<input
+			id="contact-company"
+			type="text"
+			name="company"
+			tabindex="-1"
+			autocomplete="off"
+		/>
+	</div>
+
+	<div class="contact-form__field">
+		<label class="contact-form__label font-body text-label font-semibold text-ink" for="contact-name">
+			{nameLabel}
+		</label>
+		<input
+			id="contact-name"
+			class="contact-form__input border-outline-variant bg-surface font-body text-body-md text-ink rounded"
+			type="text"
+			name="name"
+			autocomplete="name"
+			required
+			placeholder={namePlaceholder}
+		/>
+	</div>
+
+	<div class="contact-form__field">
+		<label class="contact-form__label font-body text-label font-semibold text-ink" for="contact-email">
+			{emailLabel}
+		</label>
+		<input
+			id="contact-email"
+			class="contact-form__input border-outline-variant bg-surface font-body text-body-md text-ink rounded"
+			type="email"
+			name="email"
+			autocomplete="email"
+			required
+			placeholder={emailPlaceholder}
+		/>
+	</div>
+
+	<div class="contact-form__field">
+		<label class="contact-form__label font-body text-label font-semibold text-ink" for="contact-message">
+			{messageLabel}
+		</label>
+		<textarea
+			id="contact-message"
+			class="contact-form__input contact-form__textarea border-outline-variant bg-surface font-body text-body-md text-ink rounded"
+			name="message"
+			rows="5"
+			required
+			placeholder={messagePlaceholder}
+		></textarea>
+	</div>
+
+	<button
+		class="contact-form__submit bg-primary font-body text-label font-bold text-surface rounded transition-colors duration-200 hover:bg-primary-deep"
+		type="submit"
+	>
+		{submitLabel}
+	</button>
+</form>
+
+<style>
+	.contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem; /* spacing.stack-md */
+		text-align: start;
+		max-inline-size: 36rem;
+	}
+
+	.contact-form__honeypot {
+		position: absolute;
+		inset-inline-start: -10000px;
+		inline-size: 1px;
+		block-size: 1px;
+		overflow: hidden;
+	}
+
+	.contact-form__field {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.contact-form__label {
+		margin-block-end: 0.5rem; /* spacing.stack-sm */
+	}
+
+	.contact-form__input {
+		inline-size: 100%;
+		padding-block: 0.75rem;
+		padding-inline: 1rem;
+		border-width: 1px;
+		border-style: solid;
+		text-align: start;
+	}
+
+	.contact-form__input:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+
+	.contact-form__textarea {
+		resize: vertical;
+		min-block-size: 8rem;
+	}
+
+	.contact-form__submit {
+		align-self: start;
+		min-block-size: 3.25rem;
+		padding-block: 1rem;
+		padding-inline: 2rem;
+		border: 0;
+		cursor: pointer;
+	}
+
+	.contact-form__submit:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+</style>
+
+<script>
+	import { showToast } from '../scripts/toast';
+
+	function initContactForms(): void {
+		document.querySelectorAll<HTMLFormElement>('[data-contact-form]').forEach((form) => {
+			if (form.dataset.bound === 'true') return;
+			form.dataset.bound = 'true';
+
+			form.addEventListener('submit', async (event) => {
+				event.preventDefault();
+
+				const successMsg = form.dataset.toastSuccess ?? '';
+				const errorMsg = form.dataset.toastError ?? '';
+				const closeLabel = form.dataset.toastClose ?? '';
+				const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+				const fd = new FormData(form);
+				const payload = {
+					name: String(fd.get('name') ?? ''),
+					email: String(fd.get('email') ?? ''),
+					message: String(fd.get('message') ?? ''),
+					company: String(fd.get('company') ?? ''),
+				};
+
+				if (submit) submit.disabled = true;
+
+				try {
+					const res = await fetch('/api/contact', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(payload),
+					});
+
+					let data: { ok?: boolean } = {};
+					try {
+						data = await res.json();
+					} catch {
+						data = {};
+					}
+
+					if (res.ok && data.ok === true) {
+						showToast(successMsg, 'success', closeLabel);
+						form.reset();
+					} else {
+						showToast(errorMsg, 'error', closeLabel);
+					}
+				} catch {
+					showToast(errorMsg, 'error', closeLabel);
+				} finally {
+					if (submit) submit.disabled = false;
+				}
+			});
+		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initContactForms, { once: true });
+	} else {
+		initContactForms();
+	}
+</script>

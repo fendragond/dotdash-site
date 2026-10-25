@@ -1,0 +1,292 @@
+---
+import { SITE, isProvided } from '../data/site';
+import type { RouteKey } from '../i18n/routes';
+import {
+	getLocaleFromPath,
+	routePath,
+	switchLocalePath,
+} from '../i18n/routing';
+import { LOCALES, t, type Locale } from '../i18n/ui';
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || `/${locale}`;
+
+const NAV_KEYS: RouteKey[] = ['home', 'about', 'contact'];
+
+const navItems = NAV_KEYS.map((key) => ({
+	key,
+	href: routePath(locale, key),
+	label: t(locale, `nav.${key}`),
+}));
+
+const otherLocales = LOCALES.filter((loc): loc is Locale => loc !== locale);
+
+function isActive(href: string): boolean {
+	const normalizedHref = href.replace(/\/$/, '') || `/${locale}`;
+	const normalizedCurrent = currentPath.replace(/\/$/, '') || `/${locale}`;
+	if (normalizedHref === `/${locale}`) {
+		return normalizedCurrent === `/${locale}`;
+	}
+	return normalizedCurrent === normalizedHref;
+}
+
+const showWhatsapp = isProvided(SITE.whatsapp);
+const showLogo = isProvided(SITE.logo);
+---
+
+{/*
+  Height from global --nav-h (see global.css :root). Drawer inset uses the same var.
+*/}
+<header class="navbar fixed z-40 border-b border-outline-variant bg-surface">
+	<div class="navbar__bar mx-auto flex max-w-container items-center gap-6 px-gutter lg:gap-8">
+		<a
+			href={routePath(locale, 'home')}
+			class="flex shrink-0 items-center"
+			aria-label={t(locale, 'nav.homeAria')}
+		>
+			{
+				showLogo ? (
+					<img src={SITE.logo} alt="" class="h-8 w-auto" width="133" height="32" />
+				) : (
+					<span class="font-display text-label font-bold text-ink">{'{{TODO:site-name}}'}</span>
+				)
+			}
+		</a>
+
+		<nav
+			class="navbar__desktop hidden flex-1 items-center justify-center gap-6 min-[960px]:flex lg:gap-8"
+			aria-label={t(locale, 'nav.main')}
+		>
+			<ul class="flex items-center gap-6 lg:gap-8">
+				{
+					navItems.map(({ href, label }) => (
+						<li>
+							<a
+								href={href}
+								class:list={[
+									'navbar__link inline-flex font-body text-sm font-medium transition-colors duration-200',
+									isActive(href)
+										? 'navbar__link--active text-primary'
+										: 'text-ink hover:text-primary',
+								]}
+							>
+								{label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="navbar__tools hidden shrink-0 items-center gap-4 min-[960px]:flex">
+			<div class="navbar__langs flex items-center gap-2">
+				{
+					otherLocales.map((loc) => (
+						<a
+							href={switchLocalePath(currentPath, loc)}
+							hreflang={loc}
+							lang={loc}
+							class="font-body text-sm font-medium text-ink-variant underline-offset-2 transition-colors hover:text-primary hover:underline"
+						>
+							{t(loc, 'lang.switch')}
+						</a>
+					))
+				}
+			</div>
+			{
+				showWhatsapp && (
+					<a
+						href={SITE.whatsapp}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex min-h-[2.75rem] items-center justify-center bg-primary px-5 py-2.5 font-body text-label font-bold text-surface transition-colors duration-200 hover:bg-primary-deep"
+					>
+						{t(locale, 'cta.primary')}
+					</a>
+				)
+			}
+		</div>
+
+		<button
+			type="button"
+			class="navbar__toggle ms-auto inline-flex h-11 w-11 items-center justify-center border border-outline-variant text-ink transition-colors duration-200 hover:border-primary hover:text-primary min-[960px]:hidden"
+			data-nav-toggle
+			data-open-label={t(locale, 'nav.open')}
+			data-close-label={t(locale, 'nav.close')}
+			aria-expanded="false"
+			aria-controls="nav-drawer"
+			aria-label={t(locale, 'nav.open')}
+		>
+			<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M4 7h16M4 12h16M4 17h16"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="square"></path>
+			</svg>
+		</button>
+	</div>
+
+	<div
+		id="nav-drawer"
+		class="navbar__drawer fixed z-50 hidden bg-surface min-[960px]:hidden"
+		aria-hidden="true"
+	>
+		<div class="flex h-full flex-col">
+			<div class="flex items-center justify-end border-b border-outline-variant px-gutter py-3">
+				<button
+					type="button"
+					class="inline-flex h-11 w-11 items-center justify-center border border-outline-variant text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
+					data-nav-close
+					aria-label={t(locale, 'nav.close')}
+				>
+					<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path
+							d="M6 6l12 12M18 6L6 18"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="square"></path>
+					</svg>
+				</button>
+			</div>
+
+			<nav class="flex-1 overflow-y-auto px-gutter py-8" aria-label={t(locale, 'nav.mobile')}>
+				<ul class="flex flex-col gap-1">
+					{
+						navItems.map(({ href, label }) => (
+							<li>
+								<a
+									href={href}
+									class:list={[
+										'navbar__drawer-link block py-3 font-body text-base font-medium transition-colors duration-200',
+										isActive(href)
+											? 'navbar__drawer-link--active text-primary'
+											: 'text-ink hover:text-primary',
+									]}
+									data-nav-link
+								>
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+
+				<div class="navbar__drawer-langs mt-stack-md flex flex-col gap-1 border-t border-outline-variant pt-stack-md">
+					{
+						otherLocales.map((loc) => (
+							<a
+								href={switchLocalePath(currentPath, loc)}
+								hreflang={loc}
+								lang={loc}
+								class="block py-3 font-body text-base font-medium text-ink-variant transition-colors hover:text-primary"
+								data-nav-link
+							>
+								{t(loc, 'lang.switch')}
+							</a>
+						))
+					}
+				</div>
+			</nav>
+
+			{
+				showWhatsapp && (
+					<div class="border-t border-outline-variant px-gutter py-6">
+						<a
+							href={SITE.whatsapp}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="flex min-h-[3.25rem] w-full items-center justify-center bg-primary px-6 py-3 font-body text-label font-bold text-surface transition-colors duration-200 hover:bg-primary-deep"
+							data-nav-link
+						>
+							{t(locale, 'cta.primary')}
+						</a>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</header>
+
+<style>
+	.navbar {
+		inset-block-start: 0;
+		inset-inline: 0;
+	}
+
+	.navbar__bar {
+		block-size: var(--nav-h);
+	}
+
+	.navbar__link {
+		border-block-end: 2px solid transparent;
+		padding-block-end: 0.125rem;
+	}
+
+	.navbar__link--active,
+	.navbar__link:hover {
+		border-block-end-color: currentColor;
+	}
+
+	.navbar__drawer {
+		inset-block-start: var(--nav-h);
+		inset-block-end: 0;
+		inset-inline: 0;
+	}
+
+	.navbar__drawer-link {
+		border-inline-start: 2px solid transparent;
+		padding-inline-start: 1rem;
+	}
+
+	.navbar__drawer-link--active,
+	.navbar__drawer-link:hover {
+		border-inline-start-color: currentColor;
+	}
+</style>
+
+<script>
+	function initNavbarDrawer() {
+		const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+		const closeBtn = document.querySelector<HTMLButtonElement>('[data-nav-close]');
+		const drawer = document.getElementById('nav-drawer');
+		if (!toggle || !drawer || toggle.dataset.navInit === 'true') return;
+		toggle.dataset.navInit = 'true';
+
+		const openLabel = toggle.dataset.openLabel ?? '';
+		const closeLabel = toggle.dataset.closeLabel ?? '';
+		const links = drawer.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+
+		const setOpen = (open: boolean) => {
+			drawer.classList.toggle('hidden', !open);
+			drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+			toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+			toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
+			document.body.classList.toggle('overflow-hidden', open);
+		};
+
+		toggle.addEventListener('click', () => {
+			const isOpen = drawer.classList.contains('hidden') === false;
+			setOpen(!isOpen);
+		});
+
+		closeBtn?.addEventListener('click', () => setOpen(false));
+
+		links.forEach((link) => {
+			link.addEventListener('click', () => setOpen(false));
+		});
+
+		window.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && !drawer.classList.contains('hidden')) {
+				setOpen(false);
+			}
+		});
+
+		window.matchMedia('(min-width: 960px)').addEventListener('change', (event) => {
+			if (event.matches) setOpen(false);
+		});
+	}
+
+	initNavbarDrawer();
+	document.addEventListener('astro:page-load', initNavbarDrawer);
+</script>

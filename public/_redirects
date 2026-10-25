@@ -1,0 +1,6 @@
+# Cloudflare Workers Static Assets — redirects
+# Docs: https://developers.cloudflare.com/workers/static-assets/redirects/
+# Runs before _headers. One rule per line: [source] [destination] [code]
+
+# Root → default locale (real 301, replaces slow meta-refresh)
+/ /fr 301

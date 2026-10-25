@@ -1,0 +1,11 @@
+# Cloudflare Workers Static Assets — custom response headers
+# Docs: https://developers.cloudflare.com/workers/static-assets/headers/
+
+# --- Staging de-indexation -------------------------------------------------
+# Applies noindex ONLY to the workers.dev staging host, so the permanent
+# staging URL never competes with the production domain for indexing.
+# CRITICAL: the host is project-specific. Replace the placeholder below with
+# the real staging host at project bootstrap. NEVER use a bare /* rule here —
+# a hostless noindex would de-index production too.
+https://{{TODO:staging-host}}/*
+  X-Robots-Tag: noindex

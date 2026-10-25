@@ -1,0 +1,22 @@
+# Force LF on files parsed by Cloudflare's edge (CRLF can trip edge parsers).
+public/_redirects text eol=lf
+public/_headers   text eol=lf
+
+# Normalize line endings for common source files (LF in repo, native on checkout).
+*.astro   text
+*.ts      text
+*.js      text
+*.mjs     text
+*.json    text
+*.css     text
+*.md      text
+
+# Treat these as binary (never touch line endings).
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.webp    binary
+*.ico     binary
+*.woff    binary
+*.woff2   binary
+*.mp4     binary

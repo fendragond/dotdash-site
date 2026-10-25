@@ -1,0 +1,229 @@
+---
+import { SITE, SOCIALS, isProvided } from '../data/site';
+import type { RouteKey } from '../i18n/routes';
+import { getLocaleFromPath, routePath } from '../i18n/routing';
+import { t } from '../i18n/ui';
+
+interface Props {
+	/** Optional agency backlink — omit for a neutral footer. */
+	credit?: { label: string; href: string };
+}
+
+const { credit } = Astro.props;
+const locale = getLocaleFromPath(Astro.url.pathname);
+const year = new Date().getFullYear();
+
+const NAV_KEYS: RouteKey[] = ['home', 'about', 'contact'];
+const navItems = NAV_KEYS.map((key) => ({
+	href: routePath(locale, key),
+	label: t(locale, `nav.${key}`),
+}));
+
+type Social = { key: string; href: string; labelKey: string };
+const socials = (SOCIALS as readonly Social[]).filter((s) => isProvided(s.href));
+
+const showLogo = isProvided(SITE.logo);
+const showAddress = isProvided(SITE.address);
+const showPhone = isProvided(SITE.phone) && isProvided(SITE.phoneTel);
+const showEmail = isProvided(SITE.email);
+---
+
+{/*
+  --footer-accent binds the animated underline to the primary token without hexes.
+  Scoped CSS reads var(--footer-accent); Tailwind v4 exposes --color-primary from the theme.
+*/}
+<footer
+	class="footer bg-primary-deep text-surface [--footer-accent:var(--color-primary)]"
+>
+	<div class="mx-auto max-w-container px-gutter pb-8 pt-16 md:pb-10 md:pt-20">
+		<div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+			<div class="flex flex-col gap-3">
+				<a
+					href={routePath(locale, 'home')}
+					class="inline-block shrink-0"
+					aria-label={t(locale, 'nav.homeAria')}
+				>
+					{
+						showLogo ? (
+							<img src={SITE.logo} alt="" class="h-5 w-auto" width="83" height="20" />
+						) : (
+							<span class="font-display text-label font-bold text-surface">
+								{'{{TODO:site-name}}'}
+							</span>
+						)
+					}
+				</a>
+				<p class="font-body text-sm leading-relaxed text-surface/75">
+					{t(locale, 'footer.tagline')}
+				</p>
+			</div>
+
+			<div class="lg:ps-6">
+				<h2 class="font-mono text-eyebrow font-bold uppercase tracking-[0.15em] text-surface">
+					{t(locale, 'footer.nav')}
+					<span class="mt-2 block h-0.5 w-6 bg-primary" aria-hidden="true"></span>
+				</h2>
+				<ul class="mt-4 flex flex-col gap-2">
+					{
+						navItems.map(({ href, label }) => (
+							<li>
+								<a
+									href={href}
+									class="footer-link font-body text-sm text-surface/70 transition-colors duration-200 hover:text-surface"
+								>
+									{label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div>
+				<h2 class="font-mono text-eyebrow font-bold uppercase tracking-[0.15em] text-surface">
+					{t(locale, 'footer.contact')}
+					<span class="mt-2 block h-0.5 w-6 bg-primary" aria-hidden="true"></span>
+				</h2>
+				<div class="mt-4 flex flex-col gap-2">
+					{showAddress && <p class="font-body text-sm text-surface/70">{SITE.address}</p>}
+					{
+						showPhone && (
+							<a
+								href={`tel:${SITE.phoneTel}`}
+								class="footer-link self-start font-body text-sm text-surface/70 transition-colors duration-200 hover:text-surface"
+							>
+								{SITE.phone}
+							</a>
+						)
+					}
+					{
+						showEmail && (
+							<a
+								href={`mailto:${SITE.email}`}
+								class="footer-link self-start font-body text-sm text-surface/70 transition-colors duration-200 hover:text-surface"
+							>
+								{SITE.email}
+							</a>
+						)
+					}
+					{
+						socials.length > 0 && (
+							<ul class="mt-1 flex items-center gap-2">
+								{socials.map((social) => (
+									<li>
+										<a
+											href={social.href}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={t(locale, social.labelKey)}
+											class="footer-social inline-flex h-11 items-center justify-center px-2 font-mono text-xs uppercase tracking-wide"
+										>
+											{social.key}
+										</a>
+									</li>
+								))}
+							</ul>
+						)
+					}
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="mt-4 flex flex-col gap-3 border-t border-surface/10 pt-4 sm:flex-row sm:items-center sm:justify-between md:mt-6"
+		>
+			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+				<p class="font-body text-sm text-surface/45">
+					{`© ${year} {{TODO:site-name}} — ${t(locale, 'footer.rights')}`}
+				</p>
+				<span class="hidden h-3 w-px shrink-0 bg-surface/15 sm:block" aria-hidden="true"></span>
+				<nav aria-label={t(locale, 'footer.legal')} class="flex flex-wrap items-center gap-x-3 gap-y-1">
+					<a
+						href={routePath(locale, 'legal-notice')}
+						class="footer-link font-body text-xs text-surface/40 transition-colors duration-200 hover:text-surface/70"
+					>
+						{t(locale, 'footer.legalNotice')}
+					</a>
+					<span class="text-surface/25" aria-hidden="true">·</span>
+					<a
+						href={routePath(locale, 'privacy')}
+						class="footer-link font-body text-xs text-surface/40 transition-colors duration-200 hover:text-surface/70"
+					>
+						{t(locale, 'footer.privacy')}
+					</a>
+				</nav>
+			</div>
+			{
+				credit && (
+					<p class="font-body text-xs text-surface/40">
+						{t(locale, 'footer.creditPrefix')}
+						{': '}
+						<a
+							href={credit.href}
+							class="text-surface/55 underline-offset-2 transition-colors duration-200 hover:text-surface hover:underline"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{credit.label}
+						</a>
+					</p>
+				)
+			}
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer-link {
+		position: relative;
+		display: inline-block;
+	}
+
+	.footer-link::after {
+		content: '';
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: -2px;
+		block-size: 1px;
+		background-color: var(--footer-accent);
+		transform: scaleX(0);
+		transform-origin: inline-start;
+		transition: transform 200ms ease;
+	}
+
+	.footer-link:hover::after {
+		transform: scaleX(1);
+	}
+
+	.footer-social {
+		color: rgb(255 255 255 / 0.7);
+		transition:
+			color 180ms ease,
+			transform 180ms ease;
+	}
+
+	.footer-social:hover {
+		color: rgb(255 255 255 / 1);
+		transform: translateY(-3px);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.footer-link::after {
+			transition: none;
+			transform: none;
+		}
+
+		.footer-link:hover::after {
+			/* Instant full underline — no scale animation */
+			transform: scaleX(1);
+		}
+
+		.footer-social {
+			transition: color 180ms ease;
+		}
+
+		.footer-social:hover {
+			transform: none;
+		}
+	}
+</style>

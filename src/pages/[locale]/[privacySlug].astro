@@ -1,0 +1,94 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { LOCALES, t, type Locale } from '../../i18n/ui';
+import { ROUTES } from '../../i18n/routes';
+
+export async function getStaticPaths() {
+	return LOCALES.map((locale) => ({
+		params: { locale, privacySlug: ROUTES.privacy[locale] },
+	}));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout
+	locale={locale}
+	title={t(locale, 'privacy.title')}
+	description={t(locale, 'privacy.description')}
+	robots="noindex, nofollow"
+>
+	<PageHero
+		title={t(locale, 'privacy.title')}
+		intro={t(locale, 'privacy.description')}
+	/>
+
+	<section class="legal-page bg-surface py-stack-lg" aria-label={t(locale, 'privacy.title')}>
+		<div class="legal-page__container mx-auto w-full max-w-container px-gutter">
+			<div class="legal-page__content font-body text-body-md text-ink">
+				<section class="legal-page__section" aria-labelledby="privacy-controller-heading">
+					<h2 id="privacy-controller-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.controller')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:responsable-traitement}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="privacy-purposes-heading">
+					<h2 id="privacy-purposes-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.purposes')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:finalites}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="privacy-legal-basis-heading">
+					<h2 id="privacy-legal-basis-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.legalBasis')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:base-legale}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="privacy-retention-heading">
+					<h2 id="privacy-retention-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.retention')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:duree-conservation}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="privacy-data-subject-heading">
+					<h2 id="privacy-data-subject-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.dataSubject')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:droits-personnes}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="privacy-dpo-heading">
+					<h2 id="privacy-dpo-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'privacy.dpo')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:dpo-contact}}'}</p>
+				</section>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.legal-page__content {
+		max-inline-size: 42rem;
+	}
+
+	.legal-page__section + .legal-page__section {
+		margin-block-start: 3rem; /* spacing.stack-lg */
+	}
+
+	.legal-page__heading {
+		margin-block-end: 1.5rem; /* spacing.stack-md */
+	}
+
+	.legal-page__p {
+		margin-block: 0;
+	}
+</style>

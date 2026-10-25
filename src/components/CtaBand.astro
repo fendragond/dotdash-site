@@ -1,0 +1,86 @@
+---
+export interface Props {
+	title: string;
+	subtitle?: string;
+	primaryLabel: string;
+	primaryHref: string;
+	secondaryLabel?: string;
+	secondaryHref?: string;
+	secondaryExternal?: boolean;
+	headingId?: string;
+}
+
+const {
+	title,
+	subtitle,
+	primaryLabel,
+	primaryHref,
+	secondaryLabel,
+	secondaryHref,
+	secondaryExternal = false,
+	headingId = 'cta-band-heading',
+} = Astro.props;
+
+const showSecondary = Boolean(secondaryLabel && secondaryHref);
+---
+
+<section class="cta-band bg-primary py-stack-lg" aria-labelledby={headingId}>
+	<div class="cta-band__container mx-auto w-full max-w-container px-gutter text-center" data-reveal>
+		<h2
+			id={headingId}
+			class="cta-band__title font-display font-bold text-surface"
+		>
+			{title}
+		</h2>
+		{
+			subtitle && (
+				<p class="cta-band__subtitle mx-auto font-body text-body-lg text-surface/80">
+					{subtitle}
+				</p>
+			)
+		}
+		<div class="cta-band__actions flex flex-col items-center justify-center gap-stack-md sm:flex-row sm:flex-wrap">
+			<a
+				href={primaryHref}
+				class="cta-band__btn cta-band__btn--primary inline-flex w-full items-center justify-center bg-surface font-body text-label font-bold text-primary transition-colors duration-200 hover:bg-surface-alt sm:w-auto"
+			>
+				{primaryLabel}
+			</a>
+			{
+				showSecondary && (
+					<a
+						href={secondaryHref}
+						class="cta-band__btn cta-band__btn--secondary inline-flex w-full items-center justify-center border border-surface/90 bg-transparent font-body text-label font-semibold text-surface transition-colors duration-200 hover:bg-surface/10 sm:w-auto"
+						target={secondaryExternal ? '_blank' : undefined}
+						rel={secondaryExternal ? 'noopener noreferrer' : undefined}
+					>
+						{secondaryLabel}
+					</a>
+				)
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.cta-band__title {
+		font-size: clamp(2rem, 4vw, 3rem);
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+	}
+
+	.cta-band__subtitle {
+		margin-block-start: 1.5rem; /* spacing.stack-md */
+		max-inline-size: 42rem;
+	}
+
+	.cta-band__actions {
+		margin-block-start: 3rem; /* spacing.stack-lg */
+	}
+
+	.cta-band__btn {
+		min-block-size: 3.25rem;
+		padding-block: 1rem;
+		padding-inline: 2rem;
+	}
+</style>

@@ -1,0 +1,123 @@
+---
+export interface Props {
+	title: string;
+	eyebrow?: string;
+	watermark?: string;
+	intro?: string;
+	headingId?: string;
+	layout?: 'default' | 'split';
+}
+
+const {
+	title,
+	eyebrow,
+	watermark,
+	intro,
+	headingId = 'page-hero-heading',
+	layout = 'default',
+} = Astro.props;
+
+const isSplitLayout = layout === 'split';
+const hasDefaultSlot = Astro.slots.has('default');
+const hasRightSlot = Astro.slots.has('right');
+---
+
+<section class="page-hero relative overflow-x-hidden bg-surface-alt py-stack-lg" aria-labelledby={headingId}>
+	<div class="page-hero__container relative mx-auto w-full max-w-container px-gutter">
+		{
+			watermark && (
+				<span
+					class="page-hero__watermark pointer-events-none z-0 select-none whitespace-nowrap font-display text-display text-ink/5"
+					aria-hidden="true"
+				>
+					{watermark}
+				</span>
+			)
+		}
+		{
+			isSplitLayout ? (
+				<div class="page-hero__split relative z-[1]">
+					<header class="page-hero__copy">
+						{eyebrow && <p class="eyebrow">{eyebrow}</p>}
+						<h1
+							id={headingId}
+							class="page-hero__title relative font-display text-headline-lg-m text-ink md:text-headline-lg"
+						>
+							{title}
+						</h1>
+						{intro && (
+							<p class="page-hero__intro font-body text-body-lg text-ink-variant">{intro}</p>
+						)}
+						{hasDefaultSlot && (
+							<div class="page-hero__actions">
+								<slot />
+							</div>
+						)}
+					</header>
+					{hasRightSlot && (
+						<div class="page-hero__aside">
+							<slot name="right" />
+						</div>
+					)}
+				</div>
+			) : (
+				<header class="page-hero__copy relative z-[1]">
+					{eyebrow && <p class="eyebrow">{eyebrow}</p>}
+					<h1
+						id={headingId}
+						class="page-hero__title relative font-display text-headline-lg-m text-ink md:text-headline-lg"
+					>
+						{title}
+					</h1>
+					{intro && (
+						<p class="page-hero__intro font-body text-body-lg text-ink-variant">{intro}</p>
+					)}
+					{hasDefaultSlot && (
+						<div class="page-hero__actions">
+							<slot />
+						</div>
+					)}
+				</header>
+			)
+		}
+	</div>
+</section>
+
+<style>
+	/* Logical positioning only — physical left/right forbidden (see docs/css_conventions.md). */
+	.page-hero__watermark {
+		position: absolute;
+		inset-block-start: 1.5rem; /* spacing.stack-md */
+		inset-inline-start: 0;
+		text-align: start;
+	}
+
+	.page-hero__copy {
+		max-inline-size: 40rem;
+	}
+
+	.page-hero__title {
+		margin-block-start: 0.5rem; /* spacing.stack-sm */
+	}
+
+	.page-hero__intro {
+		margin-block-start: 0.5rem; /* spacing.stack-sm */
+		max-inline-size: 65ch;
+	}
+
+	.page-hero__actions {
+		margin-block-start: 1.5rem; /* spacing.stack-md */
+	}
+
+	.page-hero__split {
+		display: grid;
+		gap: 3rem; /* spacing.stack-lg */
+		align-items: center;
+	}
+
+	@media (min-width: 1024px) {
+		.page-hero__split {
+			grid-template-columns: 1fr minmax(0, 32.5rem);
+		}
+	}
+</style>

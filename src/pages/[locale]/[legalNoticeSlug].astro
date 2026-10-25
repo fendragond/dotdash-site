@@ -1,0 +1,112 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { LOCALES, t, type Locale } from '../../i18n/ui';
+import { ROUTES } from '../../i18n/routes';
+
+export async function getStaticPaths() {
+	return LOCALES.map((locale) => ({
+		params: { locale, legalNoticeSlug: ROUTES['legal-notice'][locale] },
+	}));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+
+<BaseLayout
+	locale={locale}
+	title={t(locale, 'legalNotice.title')}
+	description={t(locale, 'legalNotice.description')}
+	robots="noindex, nofollow"
+>
+	<PageHero
+		title={t(locale, 'legalNotice.title')}
+		intro={t(locale, 'legalNotice.description')}
+	/>
+
+	<section class="legal-page bg-surface py-stack-lg" aria-label={t(locale, 'legalNotice.title')}>
+		<div class="legal-page__container mx-auto w-full max-w-container px-gutter">
+			<div class="legal-page__content font-body text-body-md text-ink">
+				<section class="legal-page__section" aria-labelledby="legal-editor-heading">
+					<h2 id="legal-editor-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'legalNotice.editor')}
+					</h2>
+					<dl class="legal-page__dl">
+						<div class="legal-page__row">
+							<dt class="legal-page__dt text-ink-variant">{t(locale, 'legalNotice.companyName')}</dt>
+							<dd class="legal-page__dd">{'{{TODO:raison-sociale}}'}</dd>
+						</div>
+						<div class="legal-page__row">
+							<dt class="legal-page__dt text-ink-variant">{t(locale, 'legalNotice.legalForm')}</dt>
+							<dd class="legal-page__dd">{'{{TODO:forme-juridique}}'}</dd>
+						</div>
+						<div class="legal-page__row">
+							<dt class="legal-page__dt text-ink-variant">{t(locale, 'legalNotice.registration')}</dt>
+							<dd class="legal-page__dd">{'{{TODO:rc-ice}}'}</dd>
+						</div>
+						<div class="legal-page__row">
+							<dt class="legal-page__dt text-ink-variant">{t(locale, 'legalNotice.headOffice')}</dt>
+							<dd class="legal-page__dd">{'{{TODO:adresse-siege}}'}</dd>
+						</div>
+					</dl>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="legal-publisher-heading">
+					<h2 id="legal-publisher-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'legalNotice.publisher')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:directeur-publication}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="legal-host-heading">
+					<h2 id="legal-host-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'legalNotice.host')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:hebergeur}}'}</p>
+				</section>
+
+				<section class="legal-page__section" aria-labelledby="legal-ip-heading">
+					<h2 id="legal-ip-heading" class="legal-page__heading font-display text-headline-md text-ink">
+						{t(locale, 'legalNotice.ip')}
+					</h2>
+					<p class="legal-page__p">{'{{TODO:propriete-intellectuelle}}'}</p>
+				</section>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.legal-page__content {
+		max-inline-size: 42rem;
+	}
+
+	.legal-page__section + .legal-page__section {
+		margin-block-start: 3rem; /* spacing.stack-lg */
+	}
+
+	.legal-page__heading {
+		margin-block-end: 1.5rem; /* spacing.stack-md */
+	}
+
+	.legal-page__dl {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.legal-page__row {
+		display: grid;
+		gap: 0.25rem;
+	}
+
+	.legal-page__dt {
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+
+	.legal-page__p {
+		margin-block: 0;
+	}
+</style>

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# Copy to config.yml and replace every {{TODO:...}} placeholder before activating.
+
+backend:
+  name: github
+  repo: "{{TODO:github-repo}}" # owner/repo
+  branch: main
+  base_url: "{{TODO:oauth-worker-url}}"
+
+media_folder: public/uploads
+public_folder: /uploads
+
+locale: "{{TODO:cms-locale}}"
+
+collections:
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: src/content/pages
+    create: true
+    format: yaml-frontmatter
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Tags
+        name: tags
+        widget: list
+        field: { label: Tag, widget: string } # no `name`: a named field serializes as YAML objects and breaks a z.array(z.string()) schema
