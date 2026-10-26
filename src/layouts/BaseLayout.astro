@@ -3,6 +3,7 @@ import '../styles/global.css';
 import type { Locale } from '../i18n/ui';
 import { DEFAULT_LOCALE, LOCALES, LOCALE_DIR } from '../i18n/ui';
 import { switchLocalePath } from '../i18n/routing';
+import { SITE, isProvided } from '../data/site';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
@@ -36,7 +37,8 @@ const {
 void schema; // reserved — SchemaOrg slot lands in a later milestone
 
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL(ogImageProp ?? '{{TODO:og-image-default}}', Astro.site).href;
+const ogImageSrc = ogImageProp ?? SITE.ogImage;
+const ogImage = isProvided(ogImageSrc) ? new URL(ogImageSrc, Astro.site).href : undefined;
 const dir = LOCALE_DIR[locale];
 
 /** Crawlers default to index,follow — omit the meta tag in that case. */
@@ -64,7 +66,7 @@ const xDefaultHref = new URL(
 		<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
 		<link rel="shortcut icon" href="/favicon/favicon.ico" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-		<meta name="apple-mobile-web-app-title" content="{{TODO:site-name}}" />
+		<meta name="apple-mobile-web-app-title" content={SITE.name} />
 		<link rel="manifest" href="/favicon/site.webmanifest" />
 		{
 			preloadHero && (
@@ -77,13 +79,19 @@ const xDefaultHref = new URL(
 		{robots && <meta name="robots" content={robots} />}
 		<meta property="og:title" content={title} />
 		<meta property="og:type" content="website" />
-		<meta property="og:image" content={ogImage} />
 		<meta property="og:url" content={canonicalURL} />
 		<meta property="og:description" content={description} />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
+		{
+			ogImage && (
+				<>
+					<meta property="og:image" content={ogImage} />
+					<meta property="og:image:width" content="1200" />
+					<meta property="og:image:height" content="630" />
+				</>
+			)
+		}
 		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:image" content={ogImage} />
+		{ogImage && <meta name="twitter:image" content={ogImage} />}
 		{
 			alternateUrls.map(({ loc, href }) => (
 				<link rel="alternate" hreflang={loc} href={href} />

@@ -3,7 +3,7 @@
 	// and in production with `wrangler secret put` —
 	// RESEND_API_KEY, CONTACT_EMAIL, CONTACT_FROM.
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "atlaseo-starter",
+	"name": "dotdash-site",
 	"compatibility_date": "2026-03-17",
 	"compatibility_flags": ["nodejs_compat"],
 	"assets": {

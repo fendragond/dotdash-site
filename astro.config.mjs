@@ -6,6 +6,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
+import { LOCALES } from './src/i18n/ui';
+import { routePath } from './src/i18n/routing';
 
 // ---------------------------------------------------------------------------
 // KNOWN WORKAROUND — build-time image compile path remap
@@ -70,11 +72,15 @@ fs.promises.copyFile = async (source, dest, ...args) =>
 		...args,
 	);
 
-const SITEMAP_EXCLUDED_PATHS = new Set(['/mentions-legales', '/confidentialite']);
+/** Route keys whose pages are noindex — must stay in sync with the `robots` prop on those pages. */
+const NOINDEX_ROUTE_KEYS = /** @type {const} */ (['legal-notice', 'privacy']);
+const SITEMAP_EXCLUDED_PATHS = new Set(
+	LOCALES.flatMap((locale) => NOINDEX_ROUTE_KEYS.map((key) => routePath(locale, key))),
+);
 
 // https://astro.build/config
 export default defineConfig({
-	site: process.env.SITE_URL ?? 'https://example.com',
+	site: process.env.SITE_URL ?? 'https://dotdash-site.fahd-d-d01.workers.dev', // {{TODO:domaine}} — staging URL until the production domain is chosen
 	output: 'server',
 	adapter: cloudflare({ imageService: 'compile' }),
 	trailingSlash: 'never',

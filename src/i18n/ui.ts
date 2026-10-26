@@ -1,5 +1,10 @@
-export const LOCALES = ['fr', 'en'] as const;
-export type Locale = (typeof LOCALES)[number];
+export type Locale = 'fr' | 'en';
+
+/**
+ * Active locales. Generated pages, language switcher, hreflang alternates and sitemap all derive from this list.
+ * English is disabled but kept (slugs, strings, routing): add 'en' here to reactivate it.
+ */
+export const LOCALES: readonly Locale[] = ['fr'];
 export const DEFAULT_LOCALE: Locale = 'fr';
 
 /** Single source of truth for document direction. Add `ar: 'rtl'` when Arabic lands. */
@@ -23,13 +28,14 @@ export const ui: Record<Locale, Record<string, string>> = {
 		'cta.subtitle': 'Parlons-en — réponse rapide, échange sans engagement.',
 		'cta.secondary': 'En savoir plus',
 		'footer.rights': 'Tous droits réservés',
-		'footer.tagline': 'Votre accroche ici',
+		'footer.tagline': '{{TODO:accroche}}',
 		'footer.nav': 'Navigation',
 		'footer.contact': 'Contact',
 		'footer.legal': 'Informations légales',
 		'footer.legalNotice': 'Mentions légales',
 		'footer.privacy': 'Politique de confidentialité',
 		'footer.creditPrefix': 'Réalisation',
+		'social.instagram': 'Instagram',
 		'lang.switch': 'English',
 		'home.eyebrow': 'Starter',
 		'home.watermark': 'Accueil',
@@ -79,13 +85,14 @@ export const ui: Record<Locale, Record<string, string>> = {
 		'cta.subtitle': 'Let’s talk — quick reply, no commitment.',
 		'cta.secondary': 'Learn more',
 		'footer.rights': 'All rights reserved',
-		'footer.tagline': 'Your tagline here',
+		'footer.tagline': '{{TODO:accroche}}',
 		'footer.nav': 'Navigation',
 		'footer.contact': 'Contact',
 		'footer.legal': 'Legal information',
 		'footer.legalNotice': 'Legal notice',
 		'footer.privacy': 'Privacy policy',
 		'footer.creditPrefix': 'Built by',
+		'social.instagram': 'Instagram',
 		'lang.switch': 'Français',
 		'home.eyebrow': 'Starter',
 		'home.watermark': 'Home',

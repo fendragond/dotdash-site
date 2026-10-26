@@ -48,7 +48,7 @@ const showLogo = isProvided(SITE.logo);
 				showLogo ? (
 					<img src={SITE.logo} alt="" class="h-8 w-auto" width="133" height="32" />
 				) : (
-					<span class="font-display text-label font-bold text-ink">{'{{TODO:site-name}}'}</span>
+					<span class="font-display text-label font-bold text-ink">{SITE.name}</span>
 				)
 			}
 		</a>
@@ -79,20 +79,22 @@ const showLogo = isProvided(SITE.logo);
 		</nav>
 
 		<div class="navbar__tools hidden shrink-0 items-center gap-4 min-[960px]:flex">
-			<div class="navbar__langs flex items-center gap-2">
-				{
-					otherLocales.map((loc) => (
-						<a
-							href={switchLocalePath(currentPath, loc)}
-							hreflang={loc}
-							lang={loc}
-							class="font-body text-sm font-medium text-ink-variant underline-offset-2 transition-colors hover:text-primary hover:underline"
-						>
-							{t(loc, 'lang.switch')}
-						</a>
-					))
-				}
-			</div>
+			{
+				otherLocales.length > 0 && (
+					<div class="navbar__langs flex items-center gap-2">
+						{otherLocales.map((loc) => (
+							<a
+								href={switchLocalePath(currentPath, loc)}
+								hreflang={loc}
+								lang={loc}
+								class="font-body text-sm font-medium text-ink-variant underline-offset-2 transition-colors hover:text-primary hover:underline"
+							>
+								{t(loc, 'lang.switch')}
+							</a>
+						))}
+					</div>
+				)
+			}
 			{
 				showWhatsapp && (
 					<a
@@ -172,21 +174,23 @@ const showLogo = isProvided(SITE.logo);
 					}
 				</ul>
 
-				<div class="navbar__drawer-langs mt-stack-md flex flex-col gap-1 border-t border-outline-variant pt-stack-md">
-					{
-						otherLocales.map((loc) => (
-							<a
-								href={switchLocalePath(currentPath, loc)}
-								hreflang={loc}
-								lang={loc}
-								class="block py-3 font-body text-base font-medium text-ink-variant transition-colors hover:text-primary"
-								data-nav-link
-							>
-								{t(loc, 'lang.switch')}
-							</a>
-						))
-					}
-				</div>
+				{
+					otherLocales.length > 0 && (
+						<div class="navbar__drawer-langs mt-stack-md flex flex-col gap-1 border-t border-outline-variant pt-stack-md">
+							{otherLocales.map((loc) => (
+								<a
+									href={switchLocalePath(currentPath, loc)}
+									hreflang={loc}
+									lang={loc}
+									class="block py-3 font-body text-base font-medium text-ink-variant transition-colors hover:text-primary"
+									data-nav-link
+								>
+									{t(loc, 'lang.switch')}
+								</a>
+							))}
+						</div>
+					)
+				}
 			</nav>
 
 			{

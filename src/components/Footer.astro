@@ -48,7 +48,7 @@ const showEmail = isProvided(SITE.email);
 							<img src={SITE.logo} alt="" class="h-5 w-auto" width="83" height="20" />
 						) : (
 							<span class="font-display text-label font-bold text-surface">
-								{'{{TODO:site-name}}'}
+								{SITE.name}
 							</span>
 						)
 					}
@@ -134,7 +134,7 @@ const showEmail = isProvided(SITE.email);
 		>
 			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
 				<p class="font-body text-sm text-surface/45">
-					{`© ${year} {{TODO:site-name}} — ${t(locale, 'footer.rights')}`}
+					{`© ${year} ${SITE.name} — ${t(locale, 'footer.rights')}`}
 				</p>
 				<span class="hidden h-3 w-px shrink-0 bg-surface/15 sm:block" aria-hidden="true"></span>
 				<nav aria-label={t(locale, 'footer.legal')} class="flex flex-wrap items-center gap-x-3 gap-y-1">
