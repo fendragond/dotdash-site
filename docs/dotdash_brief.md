@@ -3,13 +3,13 @@
 > **Système 4 documents ATLASEO**
 >
 > - Constitution (lecture seule, non modifiable par projet) : `ATLASEO_strategy.md` + `ATLASEO_context.md`
-> - Documents par projet (à cloner depuis `docs/templates/`) : **brief** (ce fichier) + **backlog**
+> - Documents par projet (clonés depuis `docs/templates/` d'atlaseo-starter) : **brief** (ce fichier) + **backlog**
 >
 > Ce brief hérite de la constitution. Il ne la duplique pas et ne la contredit pas.
 
-**Version :** v0.1 — kickoff, Discovery en cours
+**Version :** v0.2 — repo bootstrappé et instancié, ossature en cours
 
-**Client :** Dot & Dash Studio (Loubna) · **Repo :** `fendragond/dotdash-site` (à créer à l'étape 4) · **Statut :** Discovery
+**Client :** Dot & Dash Studio (Loubna) · **Repo :** `fendragond/dotdash-site` (bootstrappé depuis atlaseo-starter v1.0.0) · **Statut :** Ossature (Phase 2)
 
 ---
 
@@ -20,7 +20,7 @@
 - **Positionnement / promesse :** {{TODO:positionnement}}
 - **Différenciateurs :** {{TODO:differenciateurs}}
 - **Ton de voix :** sobre, posé, qui laisse parler les projets. Tutoiement exclu côté site (vouvoiement visiteur).
-- **Langues du site :** {{TODO:langues-site}} *(FR par défaut ; EN à confirmer ; le starter est bilingue et RTL-ready)*
+- **Langues du site :** {{TODO:langues-site}} *(ossature en FR seul ; EN désactivé mais réactivable en une ligne via `LOCALES` dans `src/i18n/ui.ts` ; EN à confirmer avec Loubna)*
 
 **Contexte acquisition :** contact personnel du founder, reconnecté via Instagram. Présence actuelle : Instagram uniquement, pas de site, pas de fiche Google.
 
@@ -91,7 +91,7 @@ Devis indicatif envoyé en septembre : base 8 000 – 10 000 MAD, tarif « premi
   - Typo display / body / mono : {{TODO:tokens-typo}} *(piste : une sans-serif géométrique sobre ; le trio Hanken / Inter / JetBrains d'ATLASEO est trop « tech » pour un cabinet d'archi)*
   - Radius / spacing : radius quasi nul, spacing généreux. {{TODO:tokens-radius-spacing}}
 - **Médias / direction photo :** photos de réalisations plein cadre, ratio 3:2 pour les couvertures, lightbox pour les galeries (primitive du starter), médias via `MEDIA_BASE_URL` si volume important.
-- **Auteur du `DESIGN.md` :** {{TODO:auteur-design}} *(Impeccable ou Stitch, jamais les deux ; circuit en attente du verdict du spike)*
+- **Auteur du `DESIGN.md` :** {{TODO:auteur-design}} *(Impeccable ou Stitch, jamais les deux ; spike à cadrer, Impeccable proposé par défaut en cas d'égalité, circuit documenté dans `docs/impeccable_circuit.md` ; le gagnant redéfinit toutes les valeurs de tokens du starter)*
 
 ---
 
@@ -117,7 +117,8 @@ Devis indicatif envoyé en septembre : base 8 000 – 10 000 MAD, tarif « premi
 - **CMS :** non en V1. Module Sveltia opt-in à reconsidérer si Loubna veut ajouter ses projets seule.
 - **Analytics :** Cloudflare Web Analytics. GA4 {{TODO:contrainte-analytics}}
 - **Formulaires / email :** {{TODO:contrainte-formulaires}} *(Option A WhatsApp + mail + tel par défaut ; formulaire = option)*
-- **SEO / indexation staging :** `_headers` noindex sur le host staging dès le jour 1
+- **SEO / indexation staging :** X-Robots-Tag noindex en place sur le host staging via `_headers`. Ne couvre pas les réponses générées par le Worker (404, API), sans effet sur l'indexation.
+- **Sitemap :** ne contient que les pages indexables. Exclusions calculées dans `astro.config.mjs` (`NOINDEX_ROUTE_KEYS` × `LOCALES`). Les fiches projet noindex demanderont un indicateur par projet, source unique pour la meta robots et le sitemap.
 - **Autres contraintes :** site très chargé en photos → optimisation images stricte, surveiller le LCP mobile (Lighthouse sur staging avant DNS).
 
 ---
@@ -137,4 +138,4 @@ Devis indicatif envoyé en septembre : base 8 000 – 10 000 MAD, tarif « premi
 
 ---
 
-*Fin du brief — v0.1 — kickoff, Discovery en cours.*
+*Fin du brief — v0.2 — repo bootstrappé et instancié, ossature en cours.*
